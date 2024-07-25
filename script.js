@@ -1,59 +1,74 @@
-//cotaçao de moeda do dia
+//Cotação de moedas do dia.
 const USD = 5.66
 const EUR = 6.13
 const GBP = 7.29
 
-//obtendo os elementos do formulario
-const amount = document.querySelector('#amount')
-const form =document.querySelector('form')
-const currency = document.querySelector('#currency')
-const footer = document.querySelector('main footer')
-const description = document.querySelector('#description')
-// manipulando o input amount para receber apenas numeros
-amount.addEventListener('input', () => {
 
-  const hasCharactersRegex = /\D+/g
+//Obtendo os eletemtnso do formulário.
+const form = document.querySelector("form")
+const amount = document.getElementById("amount")
+const currency = document.getElementById("currency")
+const footer = document.querySelector("main footer")
+const description = document.getElementById("description")
+const result = document.getElementById("result")
 
-  amount.value = amount.value.replace(hasCharactersRegex,"")
+//Manipulando o input para receber somente números.
+amount.addEventListener("input", () => {
+
+  const hasCharacterRegex = /\D+/g;
+
+  amount.value = amount.value.replace(hasCharacterRegex, "")
 })
+//Captando o evento submit (enviar) do formulário.
+form.onsubmit = (event) => {
+  event.preventDefault()
 
-//captando o event de de submit (enviar) do formulario
-form.addEventListener('submit', (e) => {
-  e.preventDefault()
-
- switch (currency.value) {
-  case "USD":
-    convertCurrency(amount.value, USD, "US$")
-    break;
-  case "EUR":
-  convertCurrency(amount.value, EUR, "€")
-  break;
-  case "GBP":
-  convertCurrency(amount.value, GBP, "£")
-  break;
- 
-  default:
-    break;
- }
-})
-
-//function para converter a moeda
-function convertCurrency(amount, price, symbol) {
-  try {
-    description.textContent = `${symbol} 1 = ${formatCurrancyBRL(price)}`
-
-    //aplica a classe que exibe o footer para mostrar o resultado
-    footer.classList.add('show-result')
-  } catch (error) {
-    console.log(error);
+  switch (currency.value) {
+    case "USD":
+      convertCurrency(amount.value, USD, "US$")
+      break;
+    case "EUR":
+      convertCurrency(amount.value, EUR, "€")
+      break;
+    case "GBP":
+      convertCurrency(amount.value, GBP, "£")
+      break;
   }
 }
 
-//formata a moeda em Real Brasieliro 
-function formatCurrancyBRL(value) {
-  //convert para numero para utilizar o tolocalestring para formatar no padrao BRL (R$ 00,00)
+function convertCurrency(amount, price, symbol) {
+  try {
+    //Exibindo a cotação da moeda selecionada.
+    description.textContent = `${symbol} 1 = ${formatCurrencyBRL(price)}`
+
+    //Calcula o total.
+    let total = amount * price
+
+    //verifica se o resultado não é um número.
+    if (isNaN(total))
+      return alert("Por favor, digite o valor corretamente para converter.")
+
+    //Formata o valor total.
+    total = formatCurrencyBRL(total).replace("R$", "")
+
+    //Exibe o resultado total.
+    result.textContent = `${total} Reais`
+
+    //Aplica a classe quye exibe o footer para mostrar o resultado.
+    footer.classList.add("show-result")
+  } catch (error) {
+    //Remove a classe do footer removendo ele da tela.
+    footer.classList.remove("show-result")
+    console.log(error);
+    alert("Não foi possível converter. Tente novamente mais tarde.")
+  }
+}
+//Formata a moeda em Real brasileiro.
+function formatCurrencyBRL(value) {
+  //Converte para número para utilizar o toLocaleString para formatar no padrão BRL (R$ 00.00).
   return Number(value).toLocaleString("pt-BR", {
-    style:"currency",
-    currency:'BRL'
+    style: "currency",
+    currency: "BRL"
   })
+
 }
